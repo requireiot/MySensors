@@ -206,6 +206,14 @@ MY_DEFAULT_RX_LED_PIN in your sketch instead to enable LEDs
 #error You must specify MY_CONTROLLER_IP_ADDRESS or MY_CONTROLLER_URL_ADDRESS
 #endif
 
+#if defined(MY_GATEWAY_ESP32_ETHERNET) || defined(MY_GATEWAY_ESP32_WIFI)
+ #define MY_GATEWAY_ESP32
+#endif
+
+#if defined(MY_GATEWAY_ESP32_ETHERNET)
+ #define Ethernet ETH
+#endif 
+
 #if defined(MY_GATEWAY_TINYGSM) && !defined(MY_GATEWAY_MQTT_CLIENT)
 // TinyGSM currently only supports MQTTClient mode.
 #error MY_GATEWAY_TINYGSM only works with MY_GATEWAY_MQTT_CLIENT

@@ -47,7 +47,7 @@ extern MyMessage _msgTmp;
 #undef MY_ESP8266_HOSTNAME // cleanup
 #endif
 
-#if defined(MY_GATEWAY_ESP8266) || defined(MY_GATEWAY_ESP32)
+#if defined(MY_GATEWAY_ESP8266) || defined(MY_GATEWAY_ESP32_WIFI)
 #if !defined(MY_WIFI_SSID)
 #error ESP8266/ESP32 gateway: MY_WIFI_SSID not defined!
 #endif
@@ -93,6 +93,10 @@ typedef struct {
 #define EthernetServer WiFiServer
 #define EthernetClient WiFiClient
 #define EthernetUDP WiFiUDP
+#endif
+
+#if defined(MY_GATEWAY_ESP32_ETHERNET)
+ #define Ethernet ETH
 #endif
 
 #if defined(MY_GATEWAY_CLIENT_MODE)
@@ -161,22 +165,28 @@ bool gatewayTransportInit(void)
 	_w5100_spi_en(true);
 
 #if defined(MY_GATEWAY_ESP8266) || defined(MY_GATEWAY_ESP32)
+ #if defined(MY_GATEWAY_ESP8266) || defined(MY_GATEWAY_ESP32_WIFI)
 	// Turn off access point
 	WiFi.mode(WIFI_STA);
-#if defined(MY_GATEWAY_ESP8266)
+ #endif
+ #if defined(MY_GATEWAY_ESP8266)
 	WiFi.hostname(MY_HOSTNAME);
-#elif defined(MY_GATEWAY_ESP32)
+ #elif defined(MY_GATEWAY_ESP32_WIFI)
 	WiFi.setHostname(MY_HOSTNAME);
-#endif
-#ifdef MY_IP_ADDRESS
+ #elif defined(MY_GATEWAY_ESP32_ETHERNET)
+	ETH.setHostname(MY_HOSTNAME);
+ #endif
+ #ifdef MY_IP_ADDRESS
 	WiFi.config(_ethernetGatewayIP, _gatewayIp, _subnetIp);
-#endif
+ #endif
+ #if defined(MY_GATEWAY_ESP8266) || defined(MY_GATEWAY_ESP32_WIFI)
 	(void)WiFi.begin(MY_WIFI_SSID, MY_WIFI_PASSWORD, 0, MY_WIFI_BSSID);
 	while (WiFi.status() != WL_CONNECTED) {
 		delay(1000);
 		GATEWAY_DEBUG(PSTR("GWT:TIN:CONNECTING...\n"));
 	}
 	GATEWAY_DEBUG(PSTR("GWT:TIN:IP: %s\n"), WiFi.localIP().toString().c_str());
+ #endif
 #elif defined(MY_GATEWAY_LINUX)
 	// Nothing to do here
 #else
@@ -187,12 +197,14 @@ bool gatewayTransportInit(void)
 	Ethernet.begin(_ethernetGatewayMAC, _ethernetGatewayIP);
 #else /* Else part of MY_IP_GATEWAY_ADDRESS && MY_IP_SUBNET_ADDRESS */
 	// Get IP address from DHCP
+ #if !defined(MY_GATEWAY_ESP32_ETHERNET)   
 	if (!Ethernet.begin(_ethernetGatewayMAC)) {
 		GATEWAY_DEBUG(PSTR("!GWT:TIN:DHCP FAIL\n"));
 		_w5100_spi_en(false);
 		return false;
 	}
-#endif /* End of MY_IP_GATEWAY_ADDRESS && MY_IP_SUBNET_ADDRESS */
+ #endif
+ #endif /* End of MY_IP_GATEWAY_ADDRESS && MY_IP_SUBNET_ADDRESS */
 	GATEWAY_DEBUG(PSTR("GWT:TIN:IP=%" PRIu8 ".%" PRIu8 ".%" PRIu8 ".%" PRIu8 "\n"),
 	              Ethernet.localIP()[0],
 	              Ethernet.localIP()[1], Ethernet.localIP()[2], Ethernet.localIP()[3]);

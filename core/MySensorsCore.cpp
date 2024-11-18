@@ -563,7 +563,11 @@ void wait(const uint32_t waitingMS)
 #endif
 	const uint32_t enteringMS = hwMillis();
 	while (hwMillis() - enteringMS < waitingMS) {
+#ifdef MY_SEPARATE_PROCESS_TASK
+        taskYIELD();
+#else
 		_process();
+#endif
 	}
 #if defined(MY_DEBUG_VERBOSE_CORE)
 	waitLock--;
@@ -584,7 +588,11 @@ bool wait(const uint32_t waitingMS, const mysensors_command_t cmd)
 	_msg.setCommand(C_INVALID_7);
 	bool expectedResponse = false;
 	while ((hwMillis() - enteringMS < waitingMS) && !expectedResponse) {
+#ifdef MY_SEPARATE_PROCESS_TASK
+        taskYIELD();
+#else
 		_process();
+#endif
 		expectedResponse = (_msg.getCommand() == cmd);
 	}
 #if defined(MY_DEBUG_VERBOSE_CORE)
@@ -607,7 +615,11 @@ bool wait(const uint32_t waitingMS, const mysensors_command_t cmd, const uint8_t
 	_msg.setCommand(C_INVALID_7);
 	bool expectedResponse = false;
 	while ( (hwMillis() - enteringMS < waitingMS) && !expectedResponse ) {
+#ifdef MY_SEPARATE_PROCESS_TASK
+        taskYIELD();
+#else
 		_process();
+#endif
 		expectedResponse = (_msg.getCommand() == cmd && _msg.getType() == msgType);
 	}
 #if defined(MY_DEBUG_VERBOSE_CORE)
@@ -661,7 +673,11 @@ int8_t _sleep(const uint32_t sleepingMS, const bool smartSleep, const uint8_t in
 		uint32_t sleepDeltaMS = 0;
 		while (!isTransportReady() && (sleepDeltaMS < sleepingTimeMS) &&
 		        (sleepDeltaMS < MY_SLEEP_TRANSPORT_RECONNECT_TIMEOUT_MS)) {
+#ifdef MY_SEPARATE_PROCESS_TASK
+        taskYIELD();
+#else
 			_process();
+#endif
 			sleepDeltaMS = hwMillis() - sleepEnterMS;
 		}
 		// sleep remainder

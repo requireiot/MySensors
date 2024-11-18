@@ -1652,6 +1652,10 @@
  * @brief Define this for Ethernet GW based on the ENC28J60 module.
  * @def MY_GATEWAY_ESP8266
  * @brief Define this for Ethernet GW based on the ESP8266.
+ * @def MY_GATEWAY_ESP32_ETHERNET
+ * @brief Define this for GW based on the ESP32 using Ethernet.
+ * @def MY_GATEWAY_ESP32_WIFI
+ * @brief Define this for GW based on the ESP32 using Wifi.
  * @def MY_GATEWAY_ESP8266_SECURE
  * @brief Define this for Ethernet GW based on the ESP8266 with TLS.
  * @def MY_GATEWAY_ESP32
@@ -1670,6 +1674,8 @@
 //#define MY_GATEWAY_ENC28J60
 //#define MY_GATEWAY_ESP8266
 //#define MY_GATEWAY_ESP8266_SECURE
+//#define MY_GATEWAY_ESP32_ETHERNET
+//#define MY_GATEWAY_ESP32_WIFI
 //#define MY_GATEWAY_ESP32
 //#define MY_GATEWAY_LINUX
 //#define MY_GATEWAY_TINYGSM
@@ -2686,6 +2692,7 @@
 #define MY_WIFI_SSID
 #define MY_WIFI_BSSID
 #define MY_WIFI_PASSWORD
+#define MY_HOSTNAME
 #define MY_GATEWAY_LINUX
 #define MY_GATEWAY_TINYGSM
 #define MY_GATEWAY_MQTT_CLIENT

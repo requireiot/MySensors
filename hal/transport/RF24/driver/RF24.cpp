@@ -529,7 +529,14 @@ LOCAL bool RF24_initialize(void)
 	RF24_csn(HIGH);
 
 	// Initialize SPI
+#if defined(MY_RF24_MOSI_PIN) && defined(MY_RF24_MISO_PIN) && defined(MY_RF24_SCK_PIN) && defined(MY_RF24_CS_PIN)
+    RF24_DEBUG(PSTR("SPI.begin(SCK=%d, MISO=%d, MOSI=%d, SS=%d)"),
+        MY_RF24_SCK_PIN,MY_RF24_MISO_PIN,MY_RF24_MOSI_PIN,MY_RF24_CS_PIN);
+    RF24_SPI.begin(MY_RF24_SCK_PIN,MY_RF24_MISO_PIN,MY_RF24_MOSI_PIN,MY_RF24_CS_PIN);
+#else
+    RF24_DEBUG(PSTR("SPI.begin()"),
 	RF24_SPI.begin();
+#endif
 #if defined(MY_RX_MESSAGE_BUFFER_FEATURE)
 	// assure SPI can be used from interrupt context
 	// Note: ESP8266 & SoftSPI currently do not support interrupt usage for SPI,

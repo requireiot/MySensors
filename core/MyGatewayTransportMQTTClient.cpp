@@ -84,7 +84,7 @@
 #define MY_MQTT_PASSWORD NULL
 #endif
 
-#if defined(MY_GATEWAY_ESP8266) || defined(MY_GATEWAY_ESP8266_SECURE) || defined(MY_GATEWAY_ESP32)
+#if defined(MY_GATEWAY_ESP8266) || defined(MY_GATEWAY_ESP8266_SECURE) || defined(MY_GATEWAY_ESP32_WIFI)
 #if !defined(MY_WIFI_SSID)
 #error ESP8266/ESP32 MQTT gateway: MY_WIFI_SSID not defined!
 #endif
@@ -111,7 +111,7 @@
 #endif /* End of MY_IP_SUBNET_ADDRESS */
 #endif /* End of MY_IP_ADDRESS */
 
-#if defined(MY_GATEWAY_ESP8266) || defined(MY_GATEWAY_ESP32)
+#if defined(MY_GATEWAY_ESP8266) || defined(MY_GATEWAY_ESP32_WIFI) || defined(MY_GATEWAY_ESP32_ETHERNET)
 #define EthernetClient WiFiClient
 #elif defined(MY_GATEWAY_ESP8266_SECURE)
 #define EthernetClient WiFiClientSecure
@@ -227,7 +227,7 @@ bool reconnectMQTT(void)
 
 bool gatewayTransportConnect(void)
 {
-#if defined(MY_GATEWAY_ESP8266) || defined(MY_GATEWAY_ESP8266_SECURE) || defined(MY_GATEWAY_ESP32)
+#if defined(MY_GATEWAY_ESP8266) || defined(MY_GATEWAY_ESP8266_SECURE) || defined(MY_GATEWAY_ESP32_WIFI)
 	if (WiFi.status() != WL_CONNECTED) {
 		GATEWAY_DEBUG(PSTR("GWT:TPC:CONNECTING...\n"));
 		delay(1000);
@@ -245,13 +245,16 @@ bool gatewayTransportConnect(void)
 #if defined(MY_IP_ADDRESS)
 	Ethernet.begin(_MQTT_clientMAC, _MQTT_clientIp);
 #else /* Else part of MY_IP_ADDRESS */
+  /* with ESP32 Ethernet, initialization is done _outside_ MySensors */
+  #if !defined(MY_GATEWAY_ESP32_ETHERNET)
 	// Get IP address from DHCP
 	if (!Ethernet.begin(_MQTT_clientMAC)) {
 		GATEWAY_DEBUG(PSTR("!GWT:TPC:DHCP FAIL\n"));
 		_MQTT_connecting = false;
 		return false;
 	}
-#endif /* End of MY_IP_ADDRESS */
+  #endif
+ #endif /* End of MY_IP_ADDRESS */
 	GATEWAY_DEBUG(PSTR("GWT:TPC:IP=%" PRIu8 ".%" PRIu8 ".%" PRIu8 ".%" PRIu8 "\n"),
 	              Ethernet.localIP()[0],
 	              Ethernet.localIP()[1], Ethernet.localIP()[2], Ethernet.localIP()[3]);
@@ -312,7 +315,7 @@ bool gatewayTransportInit(void)
 
 	_MQTT_client.setCallback(incomingMQTT);
 
-#if defined(MY_GATEWAY_ESP8266) || defined(MY_GATEWAY_ESP8266_SECURE) || defined(MY_GATEWAY_ESP32)
+#if defined(MY_GATEWAY_ESP8266) || defined(MY_GATEWAY_ESP8266_SECURE) || defined(MY_GATEWAY_ESP32_WIFI)
 	// Turn off access point
 	WiFi.mode(WIFI_STA);
 #if defined(MY_GATEWAY_ESP8266) || defined(MY_GATEWAY_ESP8266_SECURE)
@@ -368,7 +371,7 @@ bool gatewayTransportAvailable(void)
 	if (_MQTT_connecting) {
 		return false;
 	}
-#if defined(MY_GATEWAY_ESP8266) || defined(MY_GATEWAY_ESP8266_SECURE) || defined(MY_GATEWAY_ESP32)
+#if defined(MY_GATEWAY_ESP8266) || defined(MY_GATEWAY_ESP8266_SECURE) || defined(MY_GATEWAY_ESP32_WIFI)
 	if (WiFi.status() != WL_CONNECTED) {
 #if defined(MY_GATEWAY_ESP32)
 		(void)gatewayTransportInit();

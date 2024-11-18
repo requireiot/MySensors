@@ -666,6 +666,8 @@ void transportProcessMessage(void)
 	const uint8_t last = _msg.getLast();
 	const uint8_t destination = _msg.getDestination();
 
+	if (previewMessage) previewMessage(_msg);
+
 	TRANSPORT_DEBUG(PSTR("TSF:MSG:READ,%" PRIu8 "-%" PRIu8 "-%" PRIu8 ",s=%" PRIu8 ",c=%" PRIu8 ",t=%"
 	                     PRIu8 ",pt=%" PRIu8 ",l=%" PRIu8 ",sg=%" PRIu8 ":%s\n"),
 	                sender, last, destination, _msg.getSensor(), command, type, _msg.getPayloadType(), msgLength,
@@ -898,6 +900,7 @@ void transportProcessMessage(void)
 		        isTransportReady()) {
 			TRANSPORT_DEBUG(PSTR("TSF:MSG:FWD BC MSG\n")); // controlled broadcast msg forwarding
 			(void)transportRouteMessage(_msg);
+            if (afterTransportMessage) afterTransportMessage(_msg);
 		}
 #endif
 
@@ -936,6 +939,7 @@ void transportProcessMessage(void)
 			// Relay this message to another node
 			TRANSPORT_DEBUG(PSTR("TSF:MSG:REL MSG\n"));	// relay msg
 			(void)transportRouteMessage(_msg);
+            if (afterTransportMessage) afterTransportMessage(_msg);
 		}
 #else
 		TRANSPORT_DEBUG(PSTR("!TSF:MSG:REL MSG,NREP\n"));	// message relaying request, but not a repeater
