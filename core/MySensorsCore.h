@@ -484,7 +484,7 @@ void setup(void) __attribute__((weak));
 void loop(void) __attribute__((weak));
 
 void previewMessage(const MyMessage &message) __attribute__((weak));
-void afterTransportMessage(const MyMessage &message) __attribute__((weak));
+void aftertransportSend(const uint8_t nextRecipient, const MyMessage &message) __attribute__((weak));
 
 // Inline function and macros
 static inline MyMessage& build(MyMessage &msg, const uint8_t destination, const uint8_t sensor,

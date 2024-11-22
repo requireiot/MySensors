@@ -900,7 +900,6 @@ void transportProcessMessage(void)
 		        isTransportReady()) {
 			TRANSPORT_DEBUG(PSTR("TSF:MSG:FWD BC MSG\n")); // controlled broadcast msg forwarding
 			(void)transportRouteMessage(_msg);
-            if (afterTransportMessage) afterTransportMessage(_msg);
 		}
 #endif
 
@@ -939,7 +938,6 @@ void transportProcessMessage(void)
 			// Relay this message to another node
 			TRANSPORT_DEBUG(PSTR("TSF:MSG:REL MSG\n"));	// relay msg
 			(void)transportRouteMessage(_msg);
-            if (afterTransportMessage) afterTransportMessage(_msg);
 		}
 #else
 		TRANSPORT_DEBUG(PSTR("!TSF:MSG:REL MSG,NREP\n"));	// message relaying request, but not a repeater

@@ -16,6 +16,8 @@
 * modify it under the terms of the GNU General Public License
 * version 2 as published by the Free Software Foundation.
 *
+* optionally put loop() and _pcosess() in separate FreeRTOS tasks
+* Bernd Waldmann 2024-11
 */
 
 #include "freertos/FreeRTOS.h"
