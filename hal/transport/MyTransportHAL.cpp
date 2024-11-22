@@ -175,6 +175,7 @@ bool transportHALSend(const uint8_t nextRecipient, const MyMessage *outMsg, cons
 
 	bool result = transportSend(nextRecipient, (void *)tx_data, finalLength, noACK);
 	TRANSPORT_HAL_DEBUG(PSTR("THA:SND:MSG LEN=%" PRIu8 ",RES=%" PRIu8 "\n"), finalLength, result);
+    // let application code know we sent a message
     if (aftertransportSend) aftertransportSend(nextRecipient,*outMsg);
 	return result;
 }

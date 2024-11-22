@@ -483,6 +483,7 @@ void setup(void) __attribute__((weak));
 */
 void loop(void) __attribute__((weak));
 
+// new instrumentation functions
 void previewMessage(const MyMessage &message) __attribute__((weak));
 void aftertransportSend(const uint8_t nextRecipient, const MyMessage &message) __attribute__((weak));
 
